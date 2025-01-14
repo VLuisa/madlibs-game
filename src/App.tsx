@@ -1,26 +1,44 @@
-import { useState } from 'react'
-import './App.css'
-import { MadlibsState } from './Types'
-
-function App() {
-  const [gameState, setGameState] = useState<MadlibsState | undefined>(undefined)
+import { useState, useEffect } from 'react';
+import OpenAI from "openai";
 
 
-  return (
-    <>
-      <h1>Madlibs</h1>
-      <div className="card">
+const App = () => {
+    const [content, setContent] = useState<string>('');
 
-      <button onClick={() => 
-        {
-          setGameState({rawParagraph: "Hello", parsedParagraph: ["Hello", "NOUN"]})
-        }
-      }>
-          count is {gameState?.parsedParagraph}
-        </button>
-      </div>
-    </>
-  )
-}
+    useEffect(() => {
+        const fetchDataAsync = async () => {
+            try {
+                const openai = new OpenAI({ apiKey: import.meta.env.VITE_OPENAI_API_KEY, dangerouslyAllowBrowser: true});
 
-export default App
+                const completion = await openai.chat.completions.create({
+                    model: "gpt-4o",
+                    messages: [
+                        { role: "developer", content: "You are a helpful assistant." },
+                        {
+                            role: "user",
+                            content: "Write a haiku about recursion in programming.",
+                        },
+                    ],
+                });
+                const contentResponse = completion.choices[0].message.content + "";
+
+                console.log("message1",contentResponse );
+                setContent(contentResponse)
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+
+        fetchDataAsync();
+    }, []);
+
+
+
+    return (
+        <div>
+            {content}
+        </div>
+    );
+};
+
+export default App;

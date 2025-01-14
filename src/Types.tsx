@@ -5,7 +5,7 @@ export type MadlibsState = {
   parsedParagraph?: Array<string | blankTokenValues>
 }
 
-/* 
+/*
 parsedParagraph:
 ["The dog walked to the", "NOUN", "and then it", "VERB"]
 */
