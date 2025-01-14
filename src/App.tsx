@@ -12,8 +12,8 @@ function getRandomInt(max: number) {
 }
 
 const getFieldsFromLine = (line, rawVerbs: string, rawNouns: string) => {
-  const verbs = rawVerbs.split(' ')
-  const nouns = rawNouns.split(' ')
+  const verbs = rawVerbs.split(" ");
+  const nouns = rawNouns.split(" ");
 
   if (line.text) {
     return line.text;
@@ -32,8 +32,8 @@ const App = () => {
   const [verbCount, setVerbCount] = useState(0);
   const [nounCount, setNounCount] = useState(0);
   const [renderStory, setRenderStory] = useState(false);
-  const [verbs, setVerbs] = useState('');
-  const [nouns, setNouns] = useState('');
+  const [verbs, setVerbs] = useState("");
+  const [nouns, setNouns] = useState("");
 
   useEffect(() => {
     const fetchDataAsync = async () => {
@@ -77,11 +77,9 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div className="card">
       {renderStory ? (
         <div>
-          <p>verb count: {verbCount}</p>
-          <p>noun count: {nounCount}</p>
           {content.map((line) => getFieldsFromLine(line, verbs, nouns))}
         </div>
       ) : (
