@@ -50,7 +50,7 @@ const App = () => {
             {
               role: "user",
               content:
-                "Write a geeky madlibs style story. Limit parts of speech of blanks to nouns and verbs. Limit to no more than 4 verbs or nouns. Return it in the following format: [{text: 'The quick brown fox'},{blank: 'verb'},{text: 'over the lazy fence'}]. Only return the JSON of the story not formatted as a code block.",
+                "Write a geeky madlibs style story. Limit parts of speech of blanks to nouns and verbs. Limit to no more than 10 verbs and nouns. Return it in the following format: [{text: 'The quick brown fox'},{blank: 'verb'},{text: 'over the lazy fence'}]. Only return the JSON of the story not formatted as a code block.",
             },
           ],
         });
