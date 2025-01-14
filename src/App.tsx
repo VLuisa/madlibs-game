@@ -82,7 +82,7 @@ const App = () => {
         <div>
           {content.map((line) => getFieldsFromLine(line, verbs, nouns))}
         </div>
-      ) : (
+      ) : content.length > 0 ? (
         <>
           <form onSubmit={submitUserContent}>
             <label>
@@ -106,6 +106,8 @@ const App = () => {
             <input type="submit" />
           </form>
         </>
+      ) : (
+        <>Generating story...</>
       )}
     </div>
   );
