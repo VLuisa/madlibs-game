@@ -1,16 +1,6 @@
 import { useState, useEffect } from "react";
 import OpenAI from "openai";
 
-/*
-1. Get the madlibs story
-2. Count nouns + verbs
-3. Request nouns + verbs from user
-4. Display with nouns and verbs
-*/
-
-const verbs = ["run", "code", "eat", "sleep", "knit", "dance"];
-const nouns = ["dog", "cup", "computer", "beanie", "train", "apple"];
-
 function countInstances(arr: Array<any>, key: string): number {
   const result = arr.filter((item) => "blank" in item && item.blank === key);
   return result.length;
@@ -21,7 +11,10 @@ function getRandomInt(max: number) {
   return Math.floor(Math.random() * maxFloored); // The maximum is exclusive and the minimum is inclusive
 }
 
-const getFieldsFromLine = (line) => {
+const getFieldsFromLine = (line, rawVerbs: string, rawNouns: string) => {
+  const verbs = rawVerbs.split(' ')
+  const nouns = rawNouns.split(' ')
+
   if (line.text) {
     return line.text;
   }
@@ -30,7 +23,7 @@ const getFieldsFromLine = (line) => {
     const verbIndex = getRandomInt(verbs.length);
     return <b>{verbs[verbIndex]}</b>;
   }
-  const nounIndex = getRandomInt(verbs.length);
+  const nounIndex = getRandomInt(nouns.length);
   return <b>{nouns[nounIndex]}</b>;
 };
 
@@ -39,8 +32,8 @@ const App = () => {
   const [verbCount, setVerbCount] = useState(0);
   const [nounCount, setNounCount] = useState(0);
   const [renderStory, setRenderStory] = useState(false);
-  const [verbs, setVerbs] = useState(undefined);
-  const [nouns, setNouns] = useState(undefined);
+  const [verbs, setVerbs] = useState('');
+  const [nouns, setNouns] = useState('');
 
   useEffect(() => {
     const fetchDataAsync = async () => {
@@ -57,7 +50,7 @@ const App = () => {
             {
               role: "user",
               content:
-                "Write a geeky madlibs style story. Limit parts of speech of blanks to nouns and verbs. Return it in the following format: [{text: 'The quick brown fox'},{blank: 'verb'},{text: 'over the lazy fence'}]. Only return the JSON of the story not formatted as a code block.",
+                "Write a geeky madlibs style story. Limit parts of speech of blanks to nouns and verbs. Limit to no more than 4 verbs or nouns. Return it in the following format: [{text: 'The quick brown fox'},{blank: 'verb'},{text: 'over the lazy fence'}]. Only return the JSON of the story not formatted as a code block.",
             },
           ],
         });
@@ -80,7 +73,7 @@ const App = () => {
   const submitUserContent = (event) => {
     event.preventDefault();
     setRenderStory(true);
-    alert(`The verbs you entered: ${verbs}. The nouns you entered: ${nouns}`);
+    // alert(`The verbs you entered: ${verbs}. The nouns you entered: ${nouns}`);
   };
 
   return (
@@ -89,7 +82,7 @@ const App = () => {
         <div>
           <p>verb count: {verbCount}</p>
           <p>noun count: {nounCount}</p>
-          {content.map((line) => getFieldsFromLine(line))}
+          {content.map((line) => getFieldsFromLine(line, verbs, nouns))}
         </div>
       ) : (
         <>
@@ -102,6 +95,7 @@ const App = () => {
                 onChange={(e) => setVerbs(e.target.value)}
               />
             </label>
+            <br />
             <label>
               Enter {nounCount} nouns:
               <input
@@ -110,6 +104,7 @@ const App = () => {
                 onChange={(e) => setNouns(e.target.value)}
               />
             </label>
+            <br />
             <input type="submit" />
           </form>
         </>
