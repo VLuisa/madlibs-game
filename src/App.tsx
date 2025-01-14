@@ -1,12 +1,19 @@
 import { useState, useEffect } from "react";
 import OpenAI from "openai";
 
+/*
+1. Get the madlibs story
+2. Count nouns + verbs
+3. Request nouns + verbs from user
+4. Display with nouns and verbs
+*/
+
 const verbs = ["run", "code", "eat", "sleep", "knit", "dance"];
 const nouns = ["dog", "cup", "computer", "beanie", "train", "apple"];
 
 function countInstances(arr: Array<any>, key: string): number {
-  const result = arr.filter((item) => 'blank' in item && item.blank === key);
-  return result.length
+  const result = arr.filter((item) => "blank" in item && item.blank === key);
+  return result.length;
 }
 
 function getRandomInt(max: number) {
@@ -31,6 +38,9 @@ const App = () => {
   const [content, setContent] = useState([]);
   const [verbCount, setVerbCount] = useState(0);
   const [nounCount, setNounCount] = useState(0);
+  const [renderStory, setRenderStory] = useState(false);
+  const [verbs, setVerbs] = useState(undefined);
+  const [nouns, setNouns] = useState(undefined);
 
   useEffect(() => {
     const fetchDataAsync = async () => {
@@ -57,8 +67,8 @@ const App = () => {
         console.log("message1", typeof JSON.parse(contentResponse!));
         console.log("object", jsonResponse);
         setContent(jsonResponse);
-        setNounCount(countInstances(jsonResponse, 'noun'))
-        setVerbCount(countInstances(jsonResponse, 'verb'))
+        setNounCount(countInstances(jsonResponse, "noun"));
+        setVerbCount(countInstances(jsonResponse, "verb"));
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -67,10 +77,45 @@ const App = () => {
     fetchDataAsync();
   }, []);
 
-  return <div>
-    <p>verb count: {verbCount}</p>
-    <p>noun count: {nounCount}</p>
-    {content.map((line, index) => getFieldsFromLine(line))}</div>;
+  const submitUserContent = (event) => {
+    event.preventDefault();
+    setRenderStory(true);
+    alert(`The verbs you entered: ${verbs}. The nouns you entered: ${nouns}`);
+  };
+
+  return (
+    <div>
+      {renderStory ? (
+        <div>
+          <p>verb count: {verbCount}</p>
+          <p>noun count: {nounCount}</p>
+          {content.map((line) => getFieldsFromLine(line))}
+        </div>
+      ) : (
+        <>
+          <form onSubmit={submitUserContent}>
+            <label>
+              Enter {verbCount} verbs:
+              <input
+                type="text"
+                value={verbs}
+                onChange={(e) => setVerbs(e.target.value)}
+              />
+            </label>
+            <label>
+              Enter {nounCount} nouns:
+              <input
+                type="text"
+                value={nouns}
+                onChange={(e) => setNouns(e.target.value)}
+              />
+            </label>
+            <input type="submit" />
+          </form>
+        </>
+      )}
+    </div>
+  );
 };
 
 export default App;
